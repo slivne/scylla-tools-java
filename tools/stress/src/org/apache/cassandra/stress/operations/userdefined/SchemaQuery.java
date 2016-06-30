@@ -116,12 +116,20 @@ public class SchemaQuery extends SchemaStatement
         switch (argSelect)
         {
             case MULTIROW:
+                /*
                 int c = fillRandom();
                 for (int i = 0 ; i < argumentIndex.length ; i++)
                 {
                     int argIndex = argumentIndex[i];
                     bindBuffer[i] = randomBuffer[argIndex < 0 ? 0 : random.nextInt(c)][i];
                 }
+                */
+                for (int i = 0 ; i < argumentIndex.length ; i++)
+                {
+//                   Row row =  partitions.get(0).next();
+                   bindBuffer[i] = new java.lang.Long(random.nextInt(10000000));
+                }
+                
                 return statement.bind(bindBuffer);
             case SAMEROW:
                 return bindRow(partitions.get(0).next());
