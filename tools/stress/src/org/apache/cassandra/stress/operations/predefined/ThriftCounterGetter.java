@@ -50,6 +50,11 @@ public class ThriftCounterGetter extends PredefinedOperation
                 return r != null && r.size() > 0;
             }
 
+            public boolean retryRun() throws Exception
+            {
+                return run();
+            }
+
             @Override
             public int partitionCount()
             {

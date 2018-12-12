@@ -112,6 +112,11 @@ public class TokenRangeQuery extends Operation
         int partitionCount;
         int rowCount;
 
+        public boolean retryRun() throws Exception
+        {
+            return run();
+        }
+
         @Override
         public int partitionCount()
         {

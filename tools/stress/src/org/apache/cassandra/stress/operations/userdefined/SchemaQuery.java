@@ -63,18 +63,31 @@ public class SchemaQuery extends SchemaStatement
     private class JavaDriverRun extends Runner
     {
         final JavaDriverClient client;
+	BoundStatement bs;
 
         private JavaDriverRun(JavaDriverClient client)
         {
             this.client = client;
         }
 
-        public boolean run() throws Exception
+        private boolean run_() throws Exception
         {
-            ResultSet rs = client.getSession().execute(bindArgs());
+            ResultSet rs = client.getSession().execute(bs);
             rowCount = rs.all().size();
             partitionCount = Math.min(1, rowCount);
             return true;
+        }
+
+        public boolean run() throws Exception
+        {
+            bs = bindArgs();
+            return run_();
+        }
+
+        public boolean retryRun() throws Exception
+        {
+            bs.enableTracing();
+            return run_();
         }
     }
 

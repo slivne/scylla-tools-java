@@ -59,8 +59,9 @@ public abstract class SchemaStatement extends PartitionOperation
         for (String name : bindNames)
             argumentIndex[i++] = spec.partitionGenerator.indexOf(name);
 
-        if (statement != null)
+        if (statement != null) {
             statement.setConsistencyLevel(JavaDriverClient.from(cl));
+        }
     }
 
     BoundStatement bindRow(Row row)
@@ -94,6 +95,11 @@ public abstract class SchemaStatement extends PartitionOperation
     {
         int partitionCount;
         int rowCount;
+
+        public boolean retryRun() throws Exception
+        {
+            return run();
+        }
 
         @Override
         public int partitionCount()

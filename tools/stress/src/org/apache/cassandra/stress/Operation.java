@@ -42,6 +42,7 @@ public abstract class Operation
     public static interface RunOp
     {
         public boolean run() throws Exception;
+        public boolean retryRun() throws Exception;
         public int partitionCount();
         public int rowCount();
     }
@@ -82,7 +83,11 @@ public abstract class Operation
         {
             try
             {
-                success = run.run();
+                if (tries == 0) {
+                    success = run.run();
+                } else {
+                    success = run.retryRun();
+                }
                 break;
             }
             catch (Exception e)

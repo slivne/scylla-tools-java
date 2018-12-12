@@ -89,6 +89,11 @@ public class ValidatingSchemaQuery extends PartitionOperation
             statementIndex = ThreadLocalRandom.current().nextInt(statements.length);
         }
 
+        public boolean retryRun() throws Exception
+        {
+            return run();
+        }
+
         @Override
         public int partitionCount()
         {
@@ -105,6 +110,7 @@ public class ValidatingSchemaQuery extends PartitionOperation
     private class JavaDriverRun extends Runner
     {
         final JavaDriverClient client;
+        BoundStatement bs;
 
         private JavaDriverRun(JavaDriverClient client, PartitionIterator iter)
         {
@@ -112,9 +118,9 @@ public class ValidatingSchemaQuery extends PartitionOperation
             this.client = client;
         }
 
-        public boolean run() throws Exception
+        private boolean run_() throws Exception
         {
-            ResultSet rs = client.getSession().execute(bind(statementIndex));
+            ResultSet rs = client.getSession().execute(bs);
             int[] valueIndex = new int[rs.getColumnDefinitions().size()];
             {
                 int i = 0;
@@ -148,6 +154,19 @@ public class ValidatingSchemaQuery extends PartitionOperation
             partitionCount = Math.min(1, rowCount);
             return rs.isExhausted();
         }
+
+        public boolean run() throws Exception
+        {
+            BoundStatement bs = bind(statementIndex);
+            return run_();
+        }
+
+        public boolean retryRun() throws Exception
+        {
+            bs.enableTracing();
+            return run_();
+        }
+
     }
 
     private class ThriftRun extends Runner

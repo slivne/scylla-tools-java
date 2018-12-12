@@ -61,6 +61,11 @@ public final class ThriftReader extends PredefinedOperation
                 return true;
             }
 
+            public boolean retryRun() throws Exception
+            {
+                return run();
+            }
+
             @Override
             public int partitionCount()
             {

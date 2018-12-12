@@ -238,6 +238,11 @@ public abstract class CqlOperation<V> extends PredefinedOperation
             : validate(result = client.execute(query, key, params, handler));
         }
 
+        public boolean retryRun() throws Exception
+        {
+	    return run();
+        }
+
         public abstract boolean validate(V result);
 
     }
