@@ -63,15 +63,23 @@ public class SchemaQuery extends SchemaStatement
     private class JavaDriverRun extends Runner
     {
         final JavaDriverClient client;
+        BoundStatement bs;
+        boolean firstAttempt;
 
         private JavaDriverRun(JavaDriverClient client)
         {
+            this.firstAttempt = true;
             this.client = client;
         }
 
         public boolean run() throws Exception
         {
-            ResultSet rs = client.getSession().execute(bindArgs());
+            if (firstAttempt)
+            {
+                bs = bindArgs();
+                firstAttempt = false;
+            }
+            ResultSet rs = client.getSession().execute(bs);
             rowCount = rs.all().size();
             partitionCount = Math.min(1, rowCount);
             return true;
